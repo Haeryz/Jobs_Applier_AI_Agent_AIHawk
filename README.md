@@ -44,6 +44,162 @@ Jobs_Applier_AIHawk is a cutting-edge, automated tool designed to revolutionize 
 
 In the digital age, the job search landscape has undergone a dramatic transformation. While online platforms have opened up a world of opportunities, they have also intensified competition. Job seekers often find themselves spending countless hours scrolling through listings, tailoring applications, and repetitively filling out forms. This process can be not only time-consuming but also emotionally draining, leading to job search fatigue and missed opportunities.
 
+## 🏗️ Project Architecture
+
+The following diagram illustrates the complete architecture and workflow of AIHawk, from initial setup to final resume/cover letter generation:
+
+```mermaid
+flowchart TD
+    %% User Input Layer
+    A[👤 User] --> B[📁 Configuration Files]
+    B --> B1[🔐 secrets.yaml<br/>API Keys]
+    B --> B2[📄 plain_text_resume.yaml<br/>Personal Data]
+    B --> B3[⚙️ work_preferences.yaml<br/>Job Preferences]
+    B --> B4[🛠️ config.py<br/>App Settings]
+    
+    %% Main Application Entry
+    A --> C[🚀 main.py<br/>Application Entry Point]
+    
+    %% Configuration Validation
+    C --> D[✅ ConfigValidator]
+    D --> D1[📧 Email Validation]
+    D --> D2[🔑 API Key Validation]
+    D --> D3[📋 Required Fields Check]
+    D --> D4[📏 Distance/Location Validation]
+    
+    %% File Management
+    C --> E[📂 FileManager]
+    E --> E1[📁 Data Folder Validation]
+    E --> E2[📄 Required Files Check]
+    E --> E3[📤 Output Directory Setup]
+    
+    %% User Action Selection
+    D --> F[❓ Interactive Prompt]
+    F --> F1[📝 Generate Resume]
+    F --> F2[🎯 Generate Tailored Resume]
+    F --> F3[💌 Generate Cover Letter]
+    
+    %% Core Processing Engine
+    F1 --> G[⚙️ Resume Processing Engine]
+    F2 --> G
+    F3 --> H[💌 Cover Letter Engine]
+    
+    %% Resume Generation Flow
+    G --> G1[🎨 StyleManager<br/>Resume Templates]
+    G --> G2[📝 ResumeGenerator<br/>Content Processing]
+    G --> G3[📊 Resume Schema<br/>Data Structure]
+    
+    %% Job Description Processing
+    F2 --> I[🔍 Job Description Input]
+    F3 --> I
+    I --> I1[🌐 URL Input<br/>Web Scraping]
+    I --> I2[✏️ Manual Input<br/>Direct Text]
+    
+    %% Browser Automation
+    I1 --> J[🌐 Chrome Browser<br/>Selenium WebDriver]
+    J --> J1[🔍 Job Page Scraping]
+    J --> J2[📋 Content Extraction]
+    
+    %% AI/LLM Integration Hub
+    G --> K[🤖 AI Integration Hub]
+    H --> K
+    J2 --> K
+    
+    %% Multiple AI Models Support
+    K --> K1[🧠 OpenAI GPT<br/>gpt-4o, gpt-4o-mini]
+    K --> K2[🔮 DeepSeek R1<br/>via OpenRouter]
+    K --> K3[🦙 Ollama<br/>Local Models]
+    K --> K4[🔷 Claude<br/>Anthropic]
+    K --> K5[✨ Gemini<br/>Google AI]
+    
+    %% AI Processing
+    K1 --> L[🧠 AI Processing]
+    K2 --> L
+    K3 --> L
+    K4 --> L
+    K5 --> L
+    
+    %% Content Generation
+    L --> L1[📝 Content Tailoring]
+    L --> L2[🎯 Job Matching]
+    L --> L3[💡 Skills Enhancement]
+    L --> L4[📈 Optimization]
+    
+    %% Resume Facade Integration
+    G1 --> M[🎭 ResumeFacade<br/>Main Orchestrator]
+    G2 --> M
+    G3 --> M
+    L --> M
+    
+    %% Document Generation
+    M --> N[📄 PDF Generation]
+    H --> N
+    
+    %% Output Processing
+    N --> O[🔄 Base64 Encoding]
+    O --> P[📁 File Writing]
+    
+    %% Final Output
+    P --> Q1[📄 resume_base.pdf<br/>Standard Resume]
+    P --> Q2[🎯 resume_tailored.pdf<br/>Job-Specific Resume]
+    P --> Q3[💌 cover_letter_tailored.pdf<br/>Personalized Cover Letter]
+    
+    %% Error Handling & Logging
+    C --> R[📊 Logging System]
+    R --> R1[❌ Error Handling]
+    R --> R2[📈 Performance Monitoring]
+    R --> R3[🔍 Debug Information]
+    
+    %% Data Flow Annotations
+    B1 -.-> K
+    B2 -.-> G
+    B2 -.-> H
+    B3 -.-> G
+    B4 -.-> C
+    
+    %% Success Flow
+    Q1 --> S[✅ Success Notification]
+    Q2 --> S
+    Q3 --> S
+    S --> A
+    
+    %% Styling
+    classDef userInput fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef processing fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef aiModel fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef output fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef system fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class A,B,B1,B2,B3,B4 userInput
+    class C,D,E,F,G,H,I,J,M,N,O,P processing
+    class K,K1,K2,K3,K4,K5,L aiModel
+    class Q1,Q2,Q3,S output
+    class R,R1,R2,R3 system
+```
+
+### Architecture Components
+
+**🔧 Core Components:**
+- **Main Application** (`main.py`): Entry point and workflow orchestration
+- **Configuration Management**: YAML-based configuration with validation
+- **Resume Builder**: Intelligent resume generation with multiple styling options
+- **AI Integration**: Multi-model support for content optimization
+- **Browser Automation**: Web scraping for job description extraction
+
+**🤖 AI Models Supported:**
+- **OpenAI GPT**: GPT-4o, GPT-4o-mini for high-quality content generation
+- **DeepSeek R1**: Cost-effective alternative via OpenRouter API
+- **Ollama**: Local model deployment for privacy-focused users
+- **Claude**: Anthropic's advanced reasoning capabilities
+- **Gemini**: Google's multimodal AI integration
+
+**📄 Output Generation:**
+- **Standard Resume**: Professional PDF using your complete profile
+- **Tailored Resume**: Job-specific optimization based on job descriptions
+- **Cover Letter**: Personalized cover letters matching job requirements
+
+This architecture ensures modularity, scalability, and ease of maintenance while providing users with a powerful, AI-driven job application automation tool.
+
 
 ## Installation
 
